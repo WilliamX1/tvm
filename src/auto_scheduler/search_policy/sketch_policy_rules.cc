@@ -963,7 +963,8 @@ PopulationGenerationRule::ResultKind MutateTileSize::Apply(SketchPolicyNode* pol
   }
   lengths[0] = extent / ElementProduct(lengths);
 
-  int target_first_tile_size = step_id < policy->target_first_tile_size_list.size() ? policy->target_first_tile_size_list[step_id] : 0;
+  // Modify: ensure the first value of lengths equals to the target first tile size
+  int target_first_tile_size = step_id < (int)policy->target_first_tile_size_list.size() ? policy->target_first_tile_size_list[step_id] : 0;
   if (!target_first_tile_size && lengths[0] != target_first_tile_size)
     return ResultKind::kInvalid;
 
@@ -1005,8 +1006,8 @@ PopulationGenerationRule::ResultKind MutateTileSize::Apply(SketchPolicyNode* pol
     // Divide one factor from lengths[src_idx] and multiply it to lengths[dst_idx].
     Array<Integer> new_lengths;
     for (size_t j = 1; j < lengths.size(); ++j) {
-      // Modify
-      if (src_idx == 0 || dst_idx == 0) {
+      // Modify: judge if the mutation affect the first value
+      if (target_first_tile_size && (src_idx == 0 || dst_idx == 0)) {
         new_lengths.push_back(Integer(lengths[j]));
         continue;
       };

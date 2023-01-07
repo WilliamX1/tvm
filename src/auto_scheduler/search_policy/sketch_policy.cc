@@ -315,7 +315,7 @@ Array<State> SketchPolicyNode::GenerateSketches() {
   // Modify: set the first tile size for each axis
   target_first_tile_size_list.push_back(16);
   target_first_tile_size_list.push_back(32);
-  target_first_tile_size_list.push_back(16);
+  target_first_tile_size_list.push_back(32);
 
   const State& init_state = search_task->compute_dag->init_state;
 

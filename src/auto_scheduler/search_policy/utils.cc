@@ -414,11 +414,10 @@ const Array<Array<Integer>>& SplitFactorizationMemo::GetFactorizationSchemes(
 }
 
 void SplitFactorizationMemo::DfsEnumerate(int now, int remaining_length, int max_innermost_factor, int target_first_tile_size) {
-  // Modify
   if (now == n_lengths_) {
     if (tmp_stack_.back().as<IntImmNode>()->value <= max_innermost_factor) {
+      // Modify: judge if the remaining length equals to target tile size
       if (!target_first_tile_size || remaining_length == target_first_tile_size) {
-        // std::cout << target_first_tile_size << ' ' << remaining_length << ' ' << target_first_tile_size << std::endl;
         results_->push_back(tmp_stack_);
       }
     }
