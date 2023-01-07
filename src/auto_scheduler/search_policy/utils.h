@@ -672,11 +672,11 @@ class SplitFactorizationMemo {
   // Modify
   const Array<Array<Integer>>& GetFactorizationSchemes(int extent, int n_lengths,
                                                        int max_innermost_factor,
-                                                       int target_first_value = 0);
+                                                       int target_first_tile_size = 0);
   const std::vector<int>& GetFactors(int n);
 
  private:
-  void DfsEnumerate(int now, int remaining_length, int max_innermost_factor, int target_first_value = 0);
+  void DfsEnumerate(int now, int remaining_length, int max_innermost_factor, int target_first_tile_size = 0);
 
   std::unordered_map<QueryKey, Array<Array<Integer>>> memory_;
 

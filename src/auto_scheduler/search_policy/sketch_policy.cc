@@ -312,6 +312,11 @@ Array<State> SketchPolicyNode::SearchOneRound(int num_random_states, Array<State
 }
 
 Array<State> SketchPolicyNode::GenerateSketches() {
+  // Modify: set the first tile size for each axis
+  target_first_tile_size_list.push_back(16);
+  target_first_tile_size_list.push_back(32);
+  target_first_tile_size_list.push_back(16);
+
   const State& init_state = search_task->compute_dag->init_state;
 
   // Two ping pong buffers to avoid copy

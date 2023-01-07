@@ -110,6 +110,9 @@ class SketchPolicyNode : public SearchPolicyNode {
   std::mt19937 rand_gen;
   /*! \brief Memorize split space for Split. */
   SplitFactorizationMemo split_memo;
+  /*! \brief The first tile size for each axis, if not specified, = 0 */
+  // Modify
+  std::vector<int> target_first_tile_size_list; 
 
   State Search(int num_measure_trials, int early_stopping, int num_measures_per_round,
                ProgramMeasurer measurer) final;

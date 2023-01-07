@@ -516,10 +516,10 @@ PopulationGenerationRule::ResultKind InitFillTileSize::Apply(SketchPolicyNode* p
       int extent = GetIntImm(ps->extent.value());
 
       // Modify
-      int target_first_value = 16;
+      int target_first_tile_size = step_id < policy->target_first_tile_size_list.size() ? policy->target_first_tile_size_list[step_id] : 0;
       const auto& candidate_lens = split_memo.GetFactorizationSchemes(extent, ps->lengths.size(),
                                                                       max_innermost_split_factor,
-                                                                      target_first_value);
+                                                                      target_first_tile_size);
       ICHECK(!candidate_lens.empty());
       const auto& candidate_lengths = candidate_lens[(*rand_gen)() % candidate_lens.size()];
 
@@ -963,8 +963,8 @@ PopulationGenerationRule::ResultKind MutateTileSize::Apply(SketchPolicyNode* pol
   }
   lengths[0] = extent / ElementProduct(lengths);
 
-  int target_first_value = 16;
-  if (lengths[0] != target_first_value)
+  int target_first_tile_size = step_id < policy->target_first_tile_size_list.size() ? policy->target_first_tile_size_list[step_id] : 0;
+  if (!target_first_tile_size && lengths[0] != target_first_tile_size)
     return ResultKind::kInvalid;
 
   // Random permute the tile size order.
