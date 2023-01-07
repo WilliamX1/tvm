@@ -29,6 +29,7 @@
 #include <string>
 #include <utility>
 #include <vector>
+#include <iostream>
 
 #include "sketch_policy.h"
 
@@ -513,8 +514,12 @@ PopulationGenerationRule::ResultKind InitFillTileSize::Apply(SketchPolicyNode* p
 
       ICHECK(ps->extent);
       int extent = GetIntImm(ps->extent.value());
+
+      // Modify
+      int target_first_value = 16;
       const auto& candidate_lens = split_memo.GetFactorizationSchemes(extent, ps->lengths.size(),
-                                                                      max_innermost_split_factor);
+                                                                      max_innermost_split_factor,
+                                                                      target_first_value);
       ICHECK(!candidate_lens.empty());
       const auto& candidate_lengths = candidate_lens[(*rand_gen)() % candidate_lens.size()];
 
@@ -958,6 +963,10 @@ PopulationGenerationRule::ResultKind MutateTileSize::Apply(SketchPolicyNode* pol
   }
   lengths[0] = extent / ElementProduct(lengths);
 
+  int target_first_value = 16;
+  if (lengths[0] != target_first_value)
+    return ResultKind::kInvalid;
+
   // Random permute the tile size order.
   std::vector<int> random_perm;
   RandomPermutation(lengths.size(), &random_perm, rand_gen);
@@ -996,6 +1005,12 @@ PopulationGenerationRule::ResultKind MutateTileSize::Apply(SketchPolicyNode* pol
     // Divide one factor from lengths[src_idx] and multiply it to lengths[dst_idx].
     Array<Integer> new_lengths;
     for (size_t j = 1; j < lengths.size(); ++j) {
+      // Modify
+      if (src_idx == 0 || dst_idx == 0) {
+        new_lengths.push_back(Integer(lengths[j]));
+        continue;
+      };
+
       if (j == src_idx) {
         new_lengths.push_back(Integer(lengths[j] / divide_factor));
       } else if (j == dst_idx) {

@@ -669,12 +669,14 @@ class SplitFactorizationMemo {
  public:
   using QueryKey = std::tuple<int, int, int>;
 
+  // Modify
   const Array<Array<Integer>>& GetFactorizationSchemes(int extent, int n_lengths,
-                                                       int max_innermost_factor);
+                                                       int max_innermost_factor,
+                                                       int target_first_value = 0);
   const std::vector<int>& GetFactors(int n);
 
  private:
-  void DfsEnumerate(int now, int remaining_length, int max_innermost_factor);
+  void DfsEnumerate(int now, int remaining_length, int max_innermost_factor, int target_first_value = 0);
 
   std::unordered_map<QueryKey, Array<Array<Integer>>> memory_;
 
