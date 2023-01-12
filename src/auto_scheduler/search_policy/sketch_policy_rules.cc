@@ -516,12 +516,19 @@ PopulationGenerationRule::ResultKind InitFillTileSize::Apply(SketchPolicyNode* p
       int extent = GetIntImm(ps->extent.value());
 
       // Modify
-      int target_first_tile_size = step_id < policy->target_first_tile_size_list.size() ? policy->target_first_tile_size_list[step_id] : 0;
+      int target_first_tile_size = 0 <= (int)step_id - 1 && (int)step_id - 1 < (int)policy->target_first_tile_size_list.size() ? policy->target_first_tile_size_list[(int)step_id - 1] : 0;
+      std::cout << "INIT: step_id: " << step_id << " extent: " << ps->extent.value() << " target_first_tile_size: " << target_first_tile_size << std::endl;
+      // std::cout << "step_id: " << step_id << " size: " << policy->target_first_tile_size_list.size() << std::endl; 
+      // std::cout << "0. target_first_tile_size: " << target_first_tile_size << std::endl;
       const auto& candidate_lens = split_memo.GetFactorizationSchemes(extent, ps->lengths.size(),
                                                                       max_innermost_split_factor,
                                                                       target_first_tile_size);
       ICHECK(!candidate_lens.empty());
       const auto& candidate_lengths = candidate_lens[(*rand_gen)() % candidate_lens.size()];
+      std::cout << "candidate_lengths: ";
+      for (const auto& c : candidate_lengths)
+        std::cout << c << ' ';
+      std::cout << std::endl;
 
       pstate->transform_steps.Set(
           step_id,
@@ -964,9 +971,16 @@ PopulationGenerationRule::ResultKind MutateTileSize::Apply(SketchPolicyNode* pol
   lengths[0] = extent / ElementProduct(lengths);
 
   // Modify: ensure the first value of lengths equals to the target first tile size
-  int target_first_tile_size = step_id < (int)policy->target_first_tile_size_list.size() ? policy->target_first_tile_size_list[step_id] : 0;
-  if (!target_first_tile_size && lengths[0] != target_first_tile_size)
-    return ResultKind::kInvalid;
+  int target_first_tile_size = 0 <= (int)step_id - 1 && (int)step_id - 1 < (int)policy->target_first_tile_size_list.size() ? policy->target_first_tile_size_list[(int)step_id - 1] : 0;
+  std::cout << "ATT: step_id: " << step_id << " extent: " << ps->extent.value() << " target_first_tile_size: " << target_first_tile_size << std::endl;
+  // std::cout << "1. target_first_tile_size: " << target_first_tile_size << std::endl; 
+  std::cout << "lengths: ";
+  for (const int& l : lengths)
+    std::cout << l << ' ';
+  std::cout << std::endl;
+  
+  // if (target_first_tile_size && lengths[0] != target_first_tile_size)
+  //   return ResultKind::kInvalid;
 
   // Random permute the tile size order.
   std::vector<int> random_perm;
@@ -1003,14 +1017,18 @@ PopulationGenerationRule::ResultKind MutateTileSize::Apply(SketchPolicyNode* pol
       divide_factor = factors[1 + (*rand_gen)() % (factors.size() - 1)];
     }
 
+    // Modify: judge if the mutation affect the first value
+    if (src_idx == 0 || dst_idx == 0) continue;
+
     // Divide one factor from lengths[src_idx] and multiply it to lengths[dst_idx].
     Array<Integer> new_lengths;
     for (size_t j = 1; j < lengths.size(); ++j) {
       // Modify: judge if the mutation affect the first value
-      if (target_first_tile_size && (src_idx == 0 || dst_idx == 0)) {
-        new_lengths.push_back(Integer(lengths[j]));
-        continue;
-      };
+      // std::cout << "2. target_first_tile_size: " << target_first_tile_size << std::endl;
+      // if (src_idx == 0 || dst_idx == 0) {
+      //   new_lengths.push_back(Integer(lengths[j]));
+      //   continue;
+      // };
 
       if (j == src_idx) {
         new_lengths.push_back(Integer(lengths[j] / divide_factor));
@@ -1020,6 +1038,11 @@ PopulationGenerationRule::ResultKind MutateTileSize::Apply(SketchPolicyNode* pol
         new_lengths.push_back(Integer(lengths[j]));
       }
     }
+
+    std::cout << "new_lengths: ";
+    for (auto& nn : new_lengths)
+      std::cout << nn << ' ';
+    std::cout << std::endl;
 
     ICHECK_LE(GetIntImm(new_lengths.back()), max_innermost_split_factor);
 

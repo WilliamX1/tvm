@@ -398,14 +398,17 @@ void PruneInvalidState(const SearchTask& task, Array<State>* states) {
 /********** SplitFactorizationMemo **********/
 const Array<Array<Integer>>& SplitFactorizationMemo::GetFactorizationSchemes(
     int extent, int n_lengths, int max_innermost_factor, int target_first_tile_size) {
-  QueryKey key = std::make_tuple(extent, n_lengths, max_innermost_factor);
-  const auto& it = memory_.find(key);
-  if (it != memory_.end()) {
-    return it->second;
-  }
+  // QueryKey key = std::make_tuple(extent, n_lengths, max_innermost_factor);
+  // const auto& it = memory_.find(key);
+
+  // Modify
+  // if (it != memory_.end()) {
+  //   return it->second;
+  // }
 
   tmp_stack_ = Array<Integer>(n_lengths, Integer());
-  results_ = &memory_[key];
+  // results_ = &memory_[key];
+  results_ = new Array<Array<Integer>>();
   n_lengths_ = n_lengths;
 
   DfsEnumerate(0, extent, max_innermost_factor, target_first_tile_size);

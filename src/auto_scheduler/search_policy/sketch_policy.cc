@@ -312,10 +312,12 @@ Array<State> SketchPolicyNode::SearchOneRound(int num_random_states, Array<State
 }
 
 Array<State> SketchPolicyNode::GenerateSketches() {
+  // The first step is not used, so step 1 -> target_first_tile_size_list[0]
   // Modify: set the first tile size for each axis
+  target_first_tile_size_list.push_back(8);
+  target_first_tile_size_list.push_back(8);
+  // bug: this val might be used twice
   target_first_tile_size_list.push_back(16);
-  target_first_tile_size_list.push_back(32);
-  target_first_tile_size_list.push_back(32);
 
   const State& init_state = search_task->compute_dag->init_state;
 

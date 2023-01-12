@@ -1,0 +1,6 @@
+numpy
+decorator
+tornado
+cloudpickle
+psutil
+xgboost
