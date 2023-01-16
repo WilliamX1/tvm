@@ -314,10 +314,19 @@ Array<State> SketchPolicyNode::SearchOneRound(int num_random_states, Array<State
 Array<State> SketchPolicyNode::GenerateSketches() {
   // The first step is not used, so step 1 -> target_first_tile_size_list[0]
   // Modify: set the first tile size for each axis
-  target_first_tile_size_list.push_back(8);
-  target_first_tile_size_list.push_back(8);
-  // bug: this val might be used twice
-  target_first_tile_size_list.push_back(16);
+  std::ifstream ifs;
+  std::string filepath = std::string(std::getenv("HOME")) + "/.tile_size.log";
+  ifs.open(filepath, std::ios::in);
+
+  if (!ifs.is_open()) {
+    std::cout << "No such file: " << filepath << std::endl;
+  } else {
+    std::string buf;
+    while (getline(ifs, buf)) {
+      std::cout << "tile_size_specify: " << buf << std::endl;
+      target_first_tile_size_list.push_back(stoi(buf));
+    };
+  };
 
   const State& init_state = search_task->compute_dag->init_state;
 

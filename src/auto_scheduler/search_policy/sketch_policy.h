@@ -42,6 +42,8 @@
 #include <unordered_set>
 #include <utility>
 #include <vector>
+#include <iostream>
+#include <fstream>
 
 #include "sketch_policy_rules.h"
 #include "utils.h"
