@@ -68,7 +68,7 @@ with open(os.path.join(data_dir, 'process.log'), 'w') as file:
         print("--- Computational DAG ---")
         print(task.compute_dag)
 
-        log_file = "./batch_matmul.json"
+        log_file = os.path.join(data_dir, "./batch_matmul.json")
 
         measure_ctx = auto_scheduler.LocalRPCMeasureContext(min_repeat_ms=300, device=0, timeout=30)
         tune_option = auto_scheduler.TuningOptions(
